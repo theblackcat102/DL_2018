@@ -91,6 +91,9 @@ class Conv(Layers):
         W_shape = self.weights.reshape(self.filters, -1)
         dX = W_shape.T.dot(dout)
         dX = col2im_indices(dX, self.input_size, self.kernel_size[0], self.kernel_size[1], padding=self.padding, stride=self.strides[1])
+
+        del self.X_col
+
         return dX
     
     def update(self):
@@ -161,7 +164,7 @@ class MaxPooling(Layers):
 
         # cache 
         self.input_size = (batch_size, channel_size, f1, f2)
-        self.output = X_col
+        self.output = X_col.shape
         self.max_idxs = max_idxs
 
         out = X_col[max_idxs, range(max_idxs.size)]
@@ -177,7 +180,7 @@ class MaxPooling(Layers):
     def backward(self, grad):
         batch_size, f1, f2, channel_size = self.input_size
         dout_flat = grad.transpose(2, 3, 0, 1).flatten()
-        dX_col = np.zeros(self.output.shape)
+        dX_col = np.zeros(self.output)
         dX_col[self.max_idxs, range(self.max_idxs.size)] = dout_flat
         dX = col2im_indices(dX_col, (batch_size * channel_size, 1, f1, f2), self.pool_size, self.pool_size, padding=0, stride=self.strides)
 
@@ -207,6 +210,7 @@ class Dense(Layers):
         # print(grad)  
         self.d_w = np.mean(np.matmul(self.inputs[:, :, None], grad[:, None, :]), axis=0)
         self.d_b = np.mean(grad)
+        del self.inputs
         return np.dot(grad, self.W.T)
 
     def update(self):

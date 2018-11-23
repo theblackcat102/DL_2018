@@ -5,6 +5,7 @@ from utils import *
 from optimizers import RMSProp, SGD
 from models import Model
 from layers import *
+from helper import MacOSFile
 from metrics import *
 import pickle
 from sklearn.model_selection import train_test_split
@@ -31,7 +32,7 @@ def build_model():
 
 
 def test_run():
-    epoch_num = 1
+    epoch_num = 120
     batch_size = 512
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -83,7 +84,7 @@ def test_run():
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
 
     with open('mnist_finished_model.pkl', 'wb') as f:
-        pickle.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(clf, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
     pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
 
 if __name__ == "__main__":
