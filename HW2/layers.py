@@ -167,7 +167,7 @@ class MaxPooling(Layers):
         self.output = X_col.shape
         self.max_idxs = max_idxs
 
-        out = X_col[max_idxs, range(max_idxs.size)]
+        out = X_col[max_idxs, np.arange(max_idxs.size)]
         # h_out = int(np.sqrt(len(out) // batch_size // channel_size))
         h_out = (f1 - self.pool_size ) // self.strides + 1
         out = out.reshape(h_out, h_out, batch_size, channel_size)
@@ -181,7 +181,7 @@ class MaxPooling(Layers):
         batch_size, f1, f2, channel_size = self.input_size
         dout_flat = grad.transpose(2, 3, 0, 1).flatten()
         dX_col = np.zeros(self.output)
-        dX_col[self.max_idxs, range(self.max_idxs.size)] = dout_flat
+        dX_col[self.max_idxs, np.arange(self.max_idxs.size)] = dout_flat
         dX = col2im_indices(dX_col, (batch_size * channel_size, 1, f1, f2), self.pool_size, self.pool_size, padding=0, stride=self.strides)
 
         # Reshape back to match the input dimension: 5x10x28x28
