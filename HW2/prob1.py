@@ -9,7 +9,7 @@ from helper import MacOSFile
 from metrics import *
 import pickle
 from sklearn.model_selection import train_test_split
-
+import datetime
 num_classes = 10
 
 def build_model():
@@ -34,7 +34,7 @@ def build_model():
     return model
 
 def benchmark():
-    import datetime
+    
     epoch_num = 120
     batch_size = 64
 
@@ -71,7 +71,7 @@ def test_run():
     X_test = x_test.reshape(len(x_test), 1, 28, 28)
 
     clf = build_model()
-
+    train_idx = arange(0,len(X_train))
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
 
@@ -87,6 +87,7 @@ def test_run():
     pickle.dump(clf, open("mnist_test_model.pkl", "wb"))
     for epoch in range(epoch_num):
         train_loss = 0
+        start = datetime.datetime.now()
         for idx, start_idx in enumerate(range(0, len(X_train)-batch_size, batch_size)):
             end_idx = start_idx+batch_size
             x_batch = X_train[start_idx:end_idx]
@@ -107,8 +108,15 @@ def test_run():
         training_history['testing_acc'].append(testing_acc)
         training_history['training_acc'].append(training_acc)
         training_history['validation_acc'].append(validation_acc)
+        end = datetime.datetime.now()
+        delta = end - start
+        print("Epoch: %d, Time : %f" % (epoch, delta.total_seconds() * 1000))
+        print("Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( train_loss/len(X_train), training_acc, testing_acc, val_loss))
 
-        print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
+        np.random.shuffle(train_idx)
+
+        X_train = X_train[train_idx]
+        y_train = y_train[train_idx]
 
     with open('mnist_finished_model.pkl', 'wb') as f:
         pickle.dump(clf, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
