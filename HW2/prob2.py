@@ -6,6 +6,8 @@ from utils import *
 from optimizers import SGD, RMSProp
 from sklearn.model_selection import train_test_split
 from metrics import *
+from helper import MacOSFile
+from sklearn.model_selection import train_test_split
 
 num_classes = 10
 
@@ -46,8 +48,17 @@ def test_run():
     epoch_num = 50
     batch_size = 64
     # Convert class vectors to binary class matrices.
+    training_history = {
+        'training_loss': [],
+        'val_loss': [],
+        'testing_acc': [],
+        'training_acc': [],
+        'validation_acc': [],
+    }
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
+
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.2, random_state=42)
 
     for epoch in range(epoch_num):
         train_loss = 0
@@ -61,9 +72,21 @@ def test_run():
             if start_idx%50 == 0:
                 print("Iter : %d, loss : %f" % (start_idx, loss))
         training_acc = accuracy( cifar_model.predict(x_train), y_train)
-        testing_acc = accuracy( cifar_model.predict(x_test), y_test)
+        testing_acc = accuracy( cifar_model.predict(x_val), y_val)
+        validation_acc = accuracy( cifar_model.predict(x_test), y_test)
         val_loss = np.mean(cifar_model.evaluate(x_test[:100], y_train[:100]))
+
+        training_history['training_loss'].append(train_loss/len(X_train))
+        training_history['val_loss'].append(val_loss)
+        training_history['testing_acc'].append(testing_acc)
+        training_history['training_acc'].append(training_acc)
+        training_history['validation_acc'].append(validation_acc)
+
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
 
+    pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
+    with open('mnist_finished_model.pkl', 'wb') as f:
+        pickle.dump(cifar_model, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
+    
 if __name__ == "__main__":
     test_run()
