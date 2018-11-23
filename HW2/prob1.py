@@ -14,19 +14,19 @@ num_classes = 10
 
 def build_model():
     model = Model([
-        Conv(8, kernel_size=(3,3)), 
+        Conv(16, kernel_size=(3,3)), 
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
         # Dropout(0.2),
         Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        Conv(64, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=1), 
-        ReLU(),
+        # Conv(64, kernel_size=(3,3)),
+        # MaxPooling(pool_size=2, strides=1), 
+        # ReLU(),
         Flatten(),
         # Dropout(0.2),
-        Dense(input_dim=2304, output_dim=256),
+        Dense(input_dim=1568, output_dim=256),
         ReLU(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
@@ -71,7 +71,7 @@ def test_run():
     X_test = x_test.reshape(len(x_test), 1, 28, 28)
 
     clf = build_model()
-    train_idx = arange(0,len(X_train))
+    train_idx = range(0,len(X_train))
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
 
