@@ -18,22 +18,49 @@ def build_model():
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
         # Dropout(0.2),
-        Conv(16, kernel_size=(3,3)),
+        Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
+        ReLU(),
+        Conv(64, kernel_size=(3,3)),
+        MaxPooling(pool_size=2, strides=1), 
         ReLU(),
         Flatten(),
         # Dropout(0.2),
-        Dense(input_dim=784, output_dim=256),
+        Dense(input_dim=2304, output_dim=256),
         ReLU(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
 
+def benchmark():
+    import datetime
+    epoch_num = 120
+    batch_size = 64
+
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    y_train = keras.utils.to_categorical(y_train, num_classes)
+    y_test = keras.utils.to_categorical(y_test, num_classes)
+
+    X_train = x_train.reshape(len(x_train), 1, 28, 28)
+
+    X_test = x_test.reshape(len(x_test), 1, 28, 28)
+
+    clf = build_model()
+    x_batch = X_train[:batch_size]
+    y_batch = y_train[:batch_size]
+    avg_sum = 0
+    for i in range(10):
+        start = datetime.datetime.now()
+        loss = np.mean(clf.train_on_batch(x_batch, y_batch))
+        end = datetime.datetime.now()
+        delta = end - start
+        avg_sum += delta.total_seconds() * 1000
+    print("Batch size %d, time : %f ms" % (batch_size, avg_sum/10))
 
 def test_run():
     epoch_num = 120
-    batch_size = 64
+    batch_size = 512
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)

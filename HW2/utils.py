@@ -1,4 +1,6 @@
 from settings import USE_CUDA
+import numba 
+from numba import jit, njit
 if USE_CUDA:
     import cupy as np
 else:
@@ -24,7 +26,6 @@ def get_im2col_indices(x_shape, field_height, field_width, padding=1, stride=1):
 
     return (k.astype(int), i.astype(int), j.astype(int))
 
-
 def im2col_indices(x, field_height, field_width, padding=1, stride=1):
     """ An implementation of im2col based on some fancy indexing """
     # Zero-pad the input
@@ -37,7 +38,6 @@ def im2col_indices(x, field_height, field_width, padding=1, stride=1):
     C = x.shape[1]
     cols = cols.transpose(1, 2, 0).reshape(field_height * field_width * C, -1)
     return cols
-
 
 def col2im_indices(cols, x_shape, field_height=3, field_width=3, padding=1,
                    stride=1):
