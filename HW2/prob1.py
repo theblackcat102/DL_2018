@@ -4,7 +4,7 @@ import keras
 from utils import *
 from optimizers import RMSProp, SGD
 from models import Model
-from layers import *
+from numba_layers import *
 from helper import MacOSFile
 from metrics import *
 import pickle
