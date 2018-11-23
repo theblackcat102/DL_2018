@@ -36,10 +36,11 @@ def test_run():
     cifar_model = load_model()
 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    x_train = x_train.reshape(len(x_train), 3, 32, 32)
+    x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
+    x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
 
-    x_train /= 255
-    x_test /= 255
+    x_train = x_train / 255
+    x_test = x_test / 255
 
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
