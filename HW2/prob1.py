@@ -68,7 +68,7 @@ def test_run():
             train_loss += loss
             # training_history['training_loss'].append(loss)
             clf.update_weight()
-            if idx % 50 == 0:
+            if idx % 10 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
         training_acc = accuracy( clf.predict(X_train), y_train)
         validation_acc = accuracy( clf.predict(X_test), y_test)
