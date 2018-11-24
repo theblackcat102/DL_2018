@@ -31,7 +31,7 @@ def build_model():
         ReLU(),
         Dense(input_dim=128, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0002) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
 
 def benchmark():
