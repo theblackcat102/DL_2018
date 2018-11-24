@@ -75,7 +75,7 @@ def test_run():
             cifar_model.update_weight()
             if idx % 100 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
-        training_acc = accuracy( cifar_model.predict(x_train), y_train)
+        training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
         val_loss = np.mean(cifar_model.evaluate(x_test[:100], y_train[:100]))

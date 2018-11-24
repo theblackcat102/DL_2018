@@ -99,7 +99,7 @@ def test_run():
             clf.update_weight()
             if idx % 100 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
-        training_acc = accuracy( clf.predict(X_train), y_train)
+        training_acc = accuracy( clf.predict(X_train[:100]), y_train[:100])
         validation_acc = accuracy( clf.predict(X_test), y_test)
         testing_acc = accuracy(clf.predict(x_val), y_val)
 
