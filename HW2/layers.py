@@ -40,11 +40,9 @@ class Conv(Layers):
         self.first_pass = False
     
     def initial_weights(self):
-        mu = 0
         sigma = 0.01
-        sb = np.zeros(self.filters)
-        self.weights = np.random.normal(scale=sigma, size=(self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1]))
-        self.bias = sb.reshape((self.filters, 1))
+        self.weights = np.random.randn(self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1]) / np.sqrt(self.filters*self.kernel_size[0]*self.kernel_size[1] / 2.)
+        self.bias = np.zeros((self.filters, 1))
         self.padding = 1
 
     def set_optimizer(self, optimizer):
@@ -65,19 +63,16 @@ class Conv(Layers):
         H_out = (H - self.kernel_size[0] + 2*padding ) // self.strides[0] + 1
         W_out = (W - self.kernel_size[1] + 2*padding ) // self.strides[1] + 1
 
-        X_col = im2col_indices(x, self.kernel_size[0], self.kernel_size[1], padding=padding, stride=self.strides[1])
+        X_col = im2col_indices(x, self.kernel_size[0], self.kernel_size[1], padding=padding, stride=self.strides[1]).astype('float32')
         self.X_col = X_col
         W_col = self.weights.reshape(self.filters, -1)
         X_col_output = W_col.dot(X_col) + self.bias
         output = X_col_output.reshape(self.filters, H_out, W_out, N)
         output = output.transpose(3, 0, 1, 2)
-        # print(output.shape)
         return output
         
     def backward(self, grad):
-        # N, C, H, W
-        # print("backprop shape")
-        # print(grad.shape)
+
         self.d_b = np.sum(grad, axis=(0, 2, 3))
         # print(self.d_b.shape)
         self.d_b = self.d_b.reshape(self.filters, -1)
@@ -91,12 +86,11 @@ class Conv(Layers):
         dX = W_shape.T.dot(dout)
         dX = col2im_indices(dX, self.input_size, self.kernel_size[0], self.kernel_size[1], padding=self.padding, stride=self.strides[1])
 
-        del self.X_col
-
         return dX
     
     def update(self):
-        self.weights -= self.w_optimizer.update(self.d_w.reshape(self.weights.shape))
+        weight_diff = self.w_optimizer.update(self.d_w.reshape(self.weights.shape))
+        self.weights -= weight_diff
         self.bias -= self.b_optimizer.update(self.d_b)
     
     def update_lr(self, lr):
@@ -157,7 +151,7 @@ class MaxPooling(Layers):
 
         # 2 dimension 
 
-        X_col = im2col_indices(x_reshaped, self.pool_size, self.pool_size, padding=0, stride=self.strides)
+        X_col = im2col_indices(x_reshaped, self.pool_size, self.pool_size, padding=0, stride=self.strides).astype('float32')
 
         max_idxs = np.argmax(X_col, axis=0)
 
@@ -181,7 +175,7 @@ class MaxPooling(Layers):
         dout_flat = grad.transpose(2, 3, 0, 1).ravel()
         dX_col = np.zeros(self.output)
         dX_col[self.max_idxs, np.arange(self.max_idxs.size)] = dout_flat
-        dX = col2im_indices(dX_col, (batch_size * channel_size, 1, f1, f2), self.pool_size, self.pool_size, padding=0, stride=self.strides)
+        dX = col2im_indices(dX_col, (batch_size * channel_size, 1, f1, f2), self.pool_size, self.pool_size, padding=0, stride=self.strides).astype('float32')
 
         # Reshape back to match the input dimension: 5x10x28x28
         dX = dX.reshape(self.input_size)
@@ -193,9 +187,9 @@ class MaxPooling(Layers):
 class Dense(Layers):
 
     def __init__(self, input_dim, output_dim):
-        self.W = np.random.normal(scale=0.01, size=(input_dim, output_dim))
+        self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim)
         # print(self.W.shape)
-        self.b = np.zeros(output_dim)
+        self.b = np.zeros(output_dim).astype('float32')
 
     def set_optimizer(self, optimizer):
         self.w_optimizer = optimizer.copy()

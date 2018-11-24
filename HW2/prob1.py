@@ -15,29 +15,29 @@ num_classes = 10
 
 def build_model():
     model = Model([
-        Conv(8, kernel_size=(3,3)), 
+        Conv(16, kernel_size=(3,3)),
         ReLU(),
-        Conv(16, kernel_size=(3,3)), 
+        Conv(16, kernel_size=(3,3)),
         ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
+        MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3)),
         ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
+        MaxPooling(pool_size=2, strides=2),
         # Conv(64, kernel_size=(3,3)),
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
         Flatten(),
-        Dense(input_dim=1568, output_dim=128),
+        Dense(input_dim=1568, output_dim=256),
         ReLU(),
-        Dense(input_dim=128, output_dim=num_classes),
+        Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
 
 def benchmark():
     
-    epoch_num = 120
-    batch_size = 64
+    epoch_num = 50
+    batch_size = 32
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
@@ -66,11 +66,9 @@ def test_run():
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
-
-    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') ) / 255.0
-
-    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') ) / 255.0
-
+    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 122.5) / 255.0
+    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 122.5) / 255.0
+    # print(X_train[0][0])
     clf = build_model()
 
 
