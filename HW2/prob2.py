@@ -31,7 +31,7 @@ def load_model():
         ReLU(),
         MaxPooling(pool_size=2, strides=2), 
         Flatten(),
-        Dense(input_dim=256, output_dim=512),
+        Dense(input_dim=64, output_dim=512),
         ReLU(),
         Dropout(0.25),
         Dense(input_dim=512, output_dim=num_classes),
