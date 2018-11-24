@@ -120,7 +120,7 @@ def test_run():
 
         if epoch % 10 == 0:
             with open('mnist_finished_model.pkl', 'wb') as f:
-                pickle.dump(clf, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
             pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
 
 if __name__ == "__main__":

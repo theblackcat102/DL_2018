@@ -89,7 +89,7 @@ def test_run():
         if epoch % 100 == 0:
             pickle.dump(training_history, open("cifar_training_history.pkl", "wb"))
             with open('cifar_finished_model.pkl', 'wb') as f:
-                pickle.dump(cifar_model, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
     
 if __name__ == "__main__":
     test_run()
