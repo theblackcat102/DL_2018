@@ -16,12 +16,12 @@ num_classes = 10
 def build_model():
     model = Model([
         Conv(16, kernel_size=(3,3)), 
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         Dropout(0.2),
         Conv(32, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         # Conv(64, kernel_size=(3,3)),
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
