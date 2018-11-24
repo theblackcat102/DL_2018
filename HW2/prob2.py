@@ -13,18 +13,15 @@ num_classes = 10
 
 def load_model():
     cifar_model = Model([
-        Conv(8, kernel_size=(3,3)), 
+        Conv(16, kernel_size=(3,3)), 
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        Dropout(0.1),
-        Conv(16, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=2), 
-        ReLU(),
-        Dropout(0.1),
         Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        Dropout(0.1),
+        Conv(32, kernel_size=(3,3)),
+        MaxPooling(pool_size=2, strides=2), 
+        ReLU(),
         Conv(64, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
@@ -32,7 +29,7 @@ def load_model():
         Flatten(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0005) )
     return cifar_model
 
 
@@ -81,13 +78,13 @@ def test_run():
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
         val_loss = np.mean(cifar_model.evaluate(x_test[:100], y_train[:100]))
 
-        training_history['training_loss'].append(train_loss/len(X_train))
+        training_history['training_loss'].append(train_loss/len(x_train))
         training_history['val_loss'].append(val_loss)
         training_history['testing_acc'].append(testing_acc)
         training_history['training_acc'].append(training_acc)
         training_history['validation_acc'].append(validation_acc)
 
-        print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
+        print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
 
         if epoch % 100 == 0:
             pickle.dump(training_history, open("cifar_training_history.pkl", "wb"))
