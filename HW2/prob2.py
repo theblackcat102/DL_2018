@@ -64,6 +64,8 @@ def test_run():
 
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.3, random_state=42)
 
+    train_idx = [ x for x in range(0,len(x_train))]
+
     for epoch in range(epoch_num):
         train_loss = 0
         for idx, start_idx in enumerate(range(0, len(x_train)-batch_size, batch_size)):
@@ -87,6 +89,10 @@ def test_run():
         training_history['validation_acc'].append(validation_acc)
 
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
+
+        np.random.shuffle(train_idx)
+        x_train = x_train[train_idx]
+        y_train = y_train[train_idx]
 
         if epoch % 100 == 0:
             joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
