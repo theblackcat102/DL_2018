@@ -27,9 +27,11 @@ def load_model():
         Conv(64, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        Dropout(0.1),
         Flatten(),
-        Dense(input_dim=256, output_dim=num_classes),
+        Dense(input_dim=256, output_dim=512),
+        ReLU(),
+        Dropout(0.1),
+        Dense(input_dim=512, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
