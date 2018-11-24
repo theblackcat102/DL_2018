@@ -21,7 +21,7 @@ def load_model():
         Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        Conv(32, kernel_size=(3,3)),
+        Conv(64, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
         Conv(64, kernel_size=(3,3)),
