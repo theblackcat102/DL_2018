@@ -66,9 +66,9 @@ def test_run():
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    X_train = x_train.reshape(len(x_train), 1, 28, 28)
+    X_train = x_train.reshape(len(x_train), 1, 28, 28).astype('float32')
 
-    X_test = x_test.reshape(len(x_test), 1, 28, 28)
+    X_test = x_test.reshape(len(x_test), 1, 28, 28).astype('float32')
 
     clf = build_model()
     train_idx = range(0,len(X_train))
@@ -118,9 +118,10 @@ def test_run():
         X_train = X_train[train_idx]
         y_train = y_train[train_idx]
 
-    with open('mnist_finished_model.pkl', 'wb') as f:
-        pickle.dump(clf, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
-    pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
+        if epoch % 10 == 0:
+            with open('mnist_finished_model.pkl', 'wb') as f:
+                pickle.dump(clf, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
 
 if __name__ == "__main__":
     test_run()

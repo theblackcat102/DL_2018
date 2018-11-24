@@ -85,9 +85,10 @@ def test_run():
 
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
 
-    pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
-    with open('mnist_finished_model.pkl', 'wb') as f:
-        pickle.dump(cifar_model, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
+        if epoch % 10 == 0:
+            pickle.dump(training_history, open("cifar_training_history.pkl", "wb"))
+            with open('cifar_finished_model.pkl', 'wb') as f:
+                pickle.dump(cifar_model, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)
     
 if __name__ == "__main__":
     test_run()
