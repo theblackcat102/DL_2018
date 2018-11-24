@@ -35,16 +35,15 @@ class Conv(Layers):
         self.kernel_size = kernel_size
         self.filters = filters
         self.channel_size = 1
-        self.w_optimizer = SGD(learning_rate=0.001)
-        self.b_optimizer = SGD(learning_rate=0.001)
+        # self.w_optimizer = SGD(learning_rate=0.001)
+        # self.b_optimizer = SGD(learning_rate=0.001)
         self.first_pass = False
     
     def initial_weights(self):
         mu = 0
         sigma = 0.01
-        s = np.random.normal(mu, sigma, self.filters*self.kernel_size[0]*self.kernel_size[1]*self.channel_size) / np.sqrt(self.filters*self.kernel_size[0]*self.kernel_size[1]*self.channel_size/2.0)
         sb = np.zeros(self.filters)
-        self.weights = s.reshape((self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1]))
+        self.weights = np.random.normal(scale=sigma, size=(self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1]))
         self.bias = sb.reshape((self.filters, 1))
         self.padding = 1
 
