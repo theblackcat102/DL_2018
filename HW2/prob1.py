@@ -72,9 +72,10 @@ def test_run():
     X_test = x_test.reshape(len(x_test), 1, 28, 28).astype('float32') / 255.0
 
     clf = build_model()
-    train_idx = [ x for x in range(0,len(X_train))]
+
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
+    train_idx = [ x for x in range(0,len(X_train))]
     # y_train = y_train[:20000]
     # X_train = X_train[:20000]
     training_history = {
