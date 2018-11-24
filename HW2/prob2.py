@@ -31,7 +31,7 @@ def load_model():
         Flatten(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0005) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
 
 
