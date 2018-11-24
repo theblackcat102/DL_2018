@@ -15,7 +15,7 @@ num_classes = 10
 
 def build_model():
     model = Model([
-        Conv(16, kernel_size=(3,3)), 
+        Conv(8, kernel_size=(3,3)), 
         ReLU(),
         Conv(16, kernel_size=(3,3)), 
         ReLU(),
@@ -27,9 +27,9 @@ def build_model():
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
         Flatten(),
-        Dense(input_dim=1568, output_dim=256),
+        Dense(input_dim=1568, output_dim=128),
         ReLU(),
-        Dense(input_dim=256, output_dim=num_classes),
+        Dense(input_dim=128, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0002) )
     return model
