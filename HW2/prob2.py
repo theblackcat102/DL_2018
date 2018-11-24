@@ -7,6 +7,7 @@ import pickle
 from optimizers import SGD, RMSProp
 from sklearn.model_selection import train_test_split
 from metrics import *
+import joblib
 from helper import MacOSFile
 from sklearn.model_selection import train_test_split
 
@@ -88,9 +89,9 @@ def test_run():
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
 
         if epoch % 100 == 0:
-            pickle.dump(training_history, open("cifar_training_history.pkl", "wb"))
+            joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
             with open('cifar_finished_model.pkl', 'wb') as f:
-                pickle.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
+                joblib.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
     
 if __name__ == "__main__":
     test_run()

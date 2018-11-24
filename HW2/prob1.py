@@ -10,6 +10,7 @@ from metrics import *
 import pickle
 from sklearn.model_selection import train_test_split
 import datetime
+from sklearn.externals import joblib
 num_classes = 10
 
 def build_model():
@@ -120,8 +121,8 @@ def test_run():
 
         if epoch % 10 == 0:
             with open('mnist_finished_model.pkl', 'wb') as f:
-                pickle.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
-            pickle.dump(training_history, open("mnist_training_history.pkl", "wb"))
+                joblib.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
+            joblib.dump(training_history, open("mnist_training_history.pkl", "wb"))
 
 if __name__ == "__main__":
     test_run()
