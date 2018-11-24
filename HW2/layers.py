@@ -43,7 +43,7 @@ class Conv(Layers):
         mu = 0
         sigma = 0.01
         s = np.random.normal(mu, sigma, self.filters*self.kernel_size[0]*self.kernel_size[1]*self.channel_size) / np.sqrt(self.filters*self.kernel_size[0]*self.kernel_size[1]*self.channel_size/2.0)
-        sb = np.zeros(mu, sigma, self.filters)
+        sb = np.zeros(self.filters)
         self.weights = s.reshape((self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1]))
         self.bias = sb.reshape((self.filters, 1))
         self.padding = 1
