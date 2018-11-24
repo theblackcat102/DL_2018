@@ -47,9 +47,14 @@ class Model:
         return X
     
     def evaluate(self, X, y):
-        y_pred = self.forward(X, training=False)
-        loss = self.loss_func.forward(y_pred, y)
-        return loss
+        max_length = 64
+        size = len(X)
+        losses = []
+        for i in range(0, size, max_length):
+            # prediction += list(self.forward(X[i: i+max_length], training=False))
+            y_pred = self.forward(X[i: i+max_length], training=False)
+            losses = losses + list(self.loss_func.forward(y_pred, y[i: i+max_length]))
+        return losses
     
     def train_on_batch(self, X, y):
         y_pred = self.forward(X, training=True)

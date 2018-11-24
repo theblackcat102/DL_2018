@@ -33,7 +33,7 @@ def build_model():
         ReLU(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0002) )
     return model
 
 def benchmark():
@@ -62,8 +62,8 @@ def benchmark():
     print("Batch size %d, time : %f ms" % (batch_size, avg_sum/10))
 
 def test_run():
-    epoch_num = 120
-    batch_size = 128
+    epoch_num = 50
+    batch_size = 64
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)

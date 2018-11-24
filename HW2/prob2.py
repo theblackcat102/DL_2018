@@ -17,26 +17,17 @@ def load_model():
     cifar_model = Model([
         Conv(8, kernel_size=(3,3)),
         ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
+        MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3)),
         ReLU(),
-        Conv(32, kernel_size=(3,3)),
-        ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
-        Dropout(0.25),
+        MaxPooling(pool_size=2, strides=2),
         Conv(64, kernel_size=(3,3)),
         ReLU(),
+        MaxPooling(pool_size=2, strides=2),
         Conv(64, kernel_size=(3,3)),
         ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
-        Dropout(0.25),
-        Conv(64, kernel_size=(3,3)),
-        ReLU(),
-        Conv(64, kernel_size=(3,3)),
-        ReLU(),
-        MaxPooling(pool_size=2, strides=2), 
+        MaxPooling(pool_size=2, strides=2),
         Flatten(),
-        Dropout(0.25),
         Dense(input_dim=256, output_dim=512),
         ReLU(),
         Dense(input_dim=512, output_dim=num_classes),
@@ -100,10 +91,11 @@ def test_run():
             cifar_model.update_weight()
             if idx % 100 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
+        print("Finished training")
         training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
-        val_loss = np.mean(cifar_model.evaluate(x_test[:100], y_train[:100]))
+        val_loss = np.mean(cifar_model.evaluate(x_test, y_train))
 
         training_history['training_loss'].append(train_loss/len(x_train))
         training_history['val_loss'].append(val_loss)
