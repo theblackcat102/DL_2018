@@ -123,4 +123,4 @@ def test_run():
                 joblib.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
     
 if __name__ == "__main__":
-    test_predict()
+    test_run()
