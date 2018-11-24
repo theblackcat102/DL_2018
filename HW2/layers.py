@@ -179,7 +179,7 @@ class MaxPooling(Layers):
     
     def backward(self, grad):
         batch_size, f1, f2, channel_size = self.input_size
-        dout_flat = grad.transpose(2, 3, 0, 1).flatten()
+        dout_flat = grad.transpose(2, 3, 0, 1).ravel()
         dX_col = np.zeros(self.output)
         dX_col[self.max_idxs, np.arange(self.max_idxs.size)] = dout_flat
         dX = col2im_indices(dX_col, (batch_size * channel_size, 1, f1, f2), self.pool_size, self.pool_size, padding=0, stride=self.strides)
