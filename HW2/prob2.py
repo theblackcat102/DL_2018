@@ -16,15 +16,19 @@ def load_model():
         Conv(8, kernel_size=(3,3)), 
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        Dropout(0.1),
         Conv(16, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        Dropout(0.1),
         Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        Dropout(0.1),
         Conv(64, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        Dropout(0.1),
         Flatten(),
         Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
@@ -39,8 +43,8 @@ def test_run():
     x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
     x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
 
-    x_train = x_train / 255
-    x_test = x_test / 255
+    x_train = x_train / 255.0
+    x_test = x_test / 255.0
 
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
@@ -59,7 +63,7 @@ def test_run():
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.2, random_state=42)
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.3, random_state=42)
 
     for epoch in range(epoch_num):
         train_loss = 0
@@ -85,7 +89,7 @@ def test_run():
 
         print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(X_train), training_acc, testing_acc, val_loss))
 
-        if epoch % 10 == 0:
+        if epoch % 100 == 0:
             pickle.dump(training_history, open("cifar_training_history.pkl", "wb"))
             with open('cifar_finished_model.pkl', 'wb') as f:
                 pickle.dump(cifar_model, MacOSFile(f), protocol=pickle.HIGHEST_PROTOCOL)

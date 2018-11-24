@@ -4,7 +4,7 @@ import keras
 from utils import *
 from optimizers import RMSProp, SGD
 from models import Model
-from numba_layers import *
+from layers import *
 from helper import MacOSFile
 from metrics import *
 import pickle
@@ -17,7 +17,7 @@ def build_model():
         Conv(16, kernel_size=(3,3)), 
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
-        # Dropout(0.2),
+        Dropout(0.2),
         Conv(32, kernel_size=(3,3)),
         MaxPooling(pool_size=2, strides=2), 
         ReLU(),
@@ -25,10 +25,10 @@ def build_model():
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
         Flatten(),
-        # Dropout(0.2),
-        Dense(input_dim=1568, output_dim=256),
+        Dropout(0.2),
+        Dense(input_dim=1568, output_dim=128),
         ReLU(),
-        Dense(input_dim=256, output_dim=num_classes),
+        Dense(input_dim=128, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
@@ -60,7 +60,7 @@ def benchmark():
 
 def test_run():
     epoch_num = 120
-    batch_size = 512
+    batch_size = 128
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
@@ -84,7 +84,7 @@ def test_run():
         'training_acc': [],
         'validation_acc': [],
     }
-    pickle.dump(clf, open("mnist_test_model.pkl", "wb"))
+    # pickle.dump(clf, open("mnist_test_model.pkl", "wb"))
     for epoch in range(epoch_num):
         train_loss = 0
         start = datetime.datetime.now()
