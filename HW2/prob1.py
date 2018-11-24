@@ -66,16 +66,12 @@ def test_run():
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
-    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 122.5) / 255.0
-    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 122.5) / 255.0
-    # print(X_train[0][0])
+    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 127.5) / 255.0
+    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 127.5) / 255.0
     clf = build_model()
-
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
     train_idx = [ x for x in range(0,len(X_train))]
-    # y_train = y_train[:20000]
-    # X_train = X_train[:20000]
     training_history = {
         'training_loss': [],
         'val_loss': [],
@@ -83,7 +79,6 @@ def test_run():
         'training_acc': [],
         'validation_acc': [],
     }
-    # pickle.dump(clf, open("mnist_test_model.pkl", "wb"))
     for epoch in range(epoch_num):
         train_loss = 0
         start = datetime.datetime.now()
