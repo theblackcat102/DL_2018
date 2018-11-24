@@ -67,9 +67,9 @@ def test_run():
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 122.5 ) / 255.0
+    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') ) / 255.0
 
-    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 122.5 ) / 255.0
+    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') ) / 255.0
 
     clf = build_model()
 
