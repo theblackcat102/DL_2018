@@ -67,15 +67,15 @@ def test_run():
 
     for epoch in range(epoch_num):
         train_loss = 0
-        for start_idx in range(0, len(x_train)-batch_size, batch_size):
+        for idx, start_idx in enumerate(range(0, len(x_train)-batch_size, batch_size)):
             end_idx = start_idx+batch_size
             x_batch = x_train[start_idx:end_idx]
             y_batch = y_train[start_idx:end_idx]
             loss = np.mean(cifar_model.train_on_batch(x_batch, y_batch))
             train_loss += loss
             cifar_model.update_weight()
-            if start_idx % 50 == 0:
-                print("Iter : %d, loss : %f" % (start_idx, loss))
+            if idx % 50 == 0:
+                print("Iter : %d, loss : %f" % (idx, loss))
         training_acc = accuracy( cifar_model.predict(x_train), y_train)
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
