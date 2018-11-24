@@ -44,6 +44,19 @@ def load_model():
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
     return cifar_model
 
+def test_predict():
+    cifar_model = load_model()
+
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+    x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
+    x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
+
+    x_train = x_train / 255.0
+    x_test = x_test / 255.0
+
+    cifar_model.train_on_batch(x_train[:10], y_train[:10])
+    y_preds = cifar_model.predict(x_train)
+
 
 def test_run():
     cifar_model = load_model()
@@ -110,4 +123,4 @@ def test_run():
                 joblib.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
     
 if __name__ == "__main__":
-    test_run()
+    test_predict()

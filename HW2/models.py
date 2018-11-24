@@ -29,7 +29,14 @@ class Model:
         return X
     
     def predict(self, X):
-        return self.forward(X, training=False)
+        max_length = 64
+        size = len(X)
+        if size < max_length:
+            return self.forward(X, training=False)
+        prediction = []
+        for i in range(0, size, max_length):
+            prediction += list(self.forward(X[i: i+max_length], training=False))
+        return np.asarray(prediction)
     
     def get_layers_output(self, X, stop_at=4, training=False):
         for layer in self.layers[:stop_at]:
