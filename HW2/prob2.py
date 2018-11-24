@@ -3,6 +3,7 @@ import keras
 from keras.datasets import cifar10
 from layers import *
 from utils import *
+import pickle
 from optimizers import SGD, RMSProp
 from sklearn.model_selection import train_test_split
 from metrics import *
