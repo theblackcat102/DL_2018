@@ -49,11 +49,14 @@ class Model:
     def evaluate(self, X, y):
         max_length = 64
         size = len(X)
-        losses = []
+        losses = None
         for i in range(0, size, max_length):
             # prediction += list(self.forward(X[i: i+max_length], training=False))
             y_pred = self.forward(X[i: i+max_length], training=False)
-            losses = losses + list(self.loss_func.forward(y_pred, y[i: i+max_length]))
+            if losses is None:
+                losses = self.loss_func.forward(y_pred, y[i: i+max_length])
+            else:
+                losses = np.concatenate((losses, self.loss_func.forward(y_pred, y[i: i+max_length])))
         return losses
     
     def train_on_batch(self, X, y):

@@ -20,7 +20,6 @@ def build_model():
         Conv(16, kernel_size=(3,3)), 
         ReLU(),
         MaxPooling(pool_size=2, strides=2), 
-        Dropout(0.2),
         Conv(32, kernel_size=(3,3)),
         ReLU(),
         MaxPooling(pool_size=2, strides=2), 
@@ -28,7 +27,6 @@ def build_model():
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
         Flatten(),
-        Dropout(0.2),
         Dense(input_dim=1568, output_dim=256),
         ReLU(),
         Dense(input_dim=256, output_dim=num_classes),
@@ -69,9 +67,9 @@ def test_run():
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    X_train = x_train.reshape(len(x_train), 1, 28, 28).astype('float32') / 255.0
+    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 125 ) / 255.0
 
-    X_test = x_test.reshape(len(x_test), 1, 28, 28).astype('float32') / 255.0
+    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 125 ) / 255.0
 
     clf = build_model()
 

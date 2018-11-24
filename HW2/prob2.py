@@ -49,6 +49,18 @@ def test_predict():
     y_preds = cifar_model.predict(x_train)
 
 
+def test_evaluate():
+    cifar_model = load_model()
+
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+    x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
+    x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
+
+    x_train = x_train / 255.0
+    x_test = x_test / 255.0
+
+    val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
+
 def test_run():
     cifar_model = load_model()
 
@@ -95,7 +107,7 @@ def test_run():
         training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
-        val_loss = np.mean(cifar_model.evaluate(x_test, y_train))
+        val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
 
         training_history['training_loss'].append(train_loss/len(x_train))
         training_history['val_loss'].append(val_loss)
