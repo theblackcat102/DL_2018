@@ -16,24 +16,24 @@ num_classes = 10
 def load_model():
     cifar_model = Model([
         Conv(16, kernel_size=(3,3)), 
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         Conv(32, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         Conv(64, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         Conv(64, kernel_size=(3,3)),
-        MaxPooling(pool_size=2, strides=2), 
         ReLU(),
+        MaxPooling(pool_size=2, strides=2), 
         Flatten(),
         Dense(input_dim=256, output_dim=512),
         ReLU(),
-        Dropout(0.1),
+        Dropout(0.25),
         Dense(input_dim=512, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
     return cifar_model
 
 
@@ -63,7 +63,7 @@ def test_run():
     }
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
-
+    
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.3, random_state=42)
 
     train_idx = [ x for x in range(0,len(x_train))]
