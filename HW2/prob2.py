@@ -74,7 +74,7 @@ def test_run():
             loss = np.mean(cifar_model.train_on_batch(x_batch, y_batch))
             train_loss += loss
             cifar_model.update_weight()
-            if start_idx%50 == 0:
+            if start_idx % 50 == 0:
                 print("Iter : %d, loss : %f" % (start_idx, loss))
         training_acc = accuracy( cifar_model.predict(x_train), y_train)
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
