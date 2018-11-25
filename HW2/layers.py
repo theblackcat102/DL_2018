@@ -44,7 +44,7 @@ class Conv(Layers):
         sigma = 0.01
         self.weights = np.random.randn(self.filters, 
                 self.channel_size, self.kernel_size[0], 
-                self.kernel_size[1]) * np.sqrt(2. / self.filters)
+                self.kernel_size[1]) * np.sqrt(2. / (self.kernel_size[1]*self.kernel_size[0]*self.channel_size))
         self.bias = np.zeros((self.filters, 1))
         self.padding = 1
 
@@ -96,7 +96,7 @@ class Conv(Layers):
     def update(self):
         weight_diff = self.w_optimizer.update(self.d_w.reshape(self.weights.shape))
         bias_diff = self.b_optimizer.update(self.d_b)
-        # print(weight_diff)
+        print(weight_diff)
         self.weights -= weight_diff
         self.bias -= bias_diff
     
