@@ -15,23 +15,26 @@ num_classes = 10
 
 def load_model(l2_regularization=None):
     cifar_model = Model([
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
-        MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
+        Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
-        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
+        Dropout(0.3),
+        MaxPooling(pool_size=2, strides=2),
+        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         Flatten(),
-        Dense(input_dim=512, output_dim=256, l2_regularization=l2_regularization),
+        Dense(input_dim=1024, output_dim=512, l2_regularization=l2_regularization),
+        Dropout(0.3),
         ReLU(),
-        Dense(input_dim=256, output_dim=num_classes),
+        Dense(input_dim=512, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
     return cifar_model
 
 def test_predict():
@@ -75,7 +78,7 @@ def test_run():
     print(x_test.shape[0], 'test samples')
     
     epoch_num = 50
-    batch_size = 32
+    batch_size = 128
     # Convert class vectors to binary class matrices.
     training_history = {
         'training_loss': [],

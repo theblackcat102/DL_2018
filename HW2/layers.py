@@ -44,8 +44,8 @@ class Conv(Layers):
         sigma = 0.01
         self.weights = np.random.randn(self.filters, 
                 self.channel_size, self.kernel_size[0], 
-                self.kernel_size[1]) * np.sqrt(2. / (self.kernel_size[1]*self.kernel_size[0]*self.channel_size))
-        self.bias = np.zeros((self.filters, 1))
+                self.kernel_size[1]) * np.sqrt(2. / (self.kernel_size[1]*self.kernel_size[0]*self.channel_size*self.filters))
+        self.bias = np.ones((self.filters, 1)) * 0.001
         self.padding = 1
 
     def set_optimizer(self, optimizer):
@@ -96,7 +96,7 @@ class Conv(Layers):
     def update(self):
         weight_diff = self.w_optimizer.update(self.d_w.reshape(self.weights.shape))
         bias_diff = self.b_optimizer.update(self.d_b)
-        # print(weight_diff)
+        print(weight_diff)
         self.weights -= weight_diff
         self.bias -= bias_diff
     
@@ -194,7 +194,7 @@ class MaxPooling(Layers):
 class Dense(Layers):
 
     def __init__(self, input_dim, output_dim, l2_regularization=None):
-        self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim)
+        self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim/2.0)
         # print(self.W.shape)
         self.b = np.zeros(output_dim).astype('float32')
         self.l2_regularization = l2_regularization
@@ -237,7 +237,7 @@ class Dropout(Layers):
     def forward(self, x, training=True):
         self.training = training
         if training:
-            self.drop_mask = np.random.binomial(1, self.dropout_rate, size=x.shape) / (1-self.dropout_rate)
+            self.drop_mask = np.random.binomial(1, self.dropout_rate, size=x.shape) / self.dropout_rate
             output = x * self.drop_mask
             return output
         return x
