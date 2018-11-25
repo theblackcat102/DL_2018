@@ -90,8 +90,10 @@ class Conv(Layers):
     
     def update(self):
         weight_diff = self.w_optimizer.update(self.d_w.reshape(self.weights.shape))
+        bias_diff = self.b_optimizer.update(self.d_b)
+        # print(bias_diff)
         self.weights -= weight_diff
-        self.bias -= self.b_optimizer.update(self.d_b)
+        self.bias -= bias_diff
     
     def update_lr(self, lr):
         self.w_optimizer.update(lr)

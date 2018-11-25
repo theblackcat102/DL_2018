@@ -15,24 +15,27 @@ num_classes = 10
 
 def load_model():
     cifar_model = Model([
-        Conv(8, kernel_size=(3,3)),
+        Conv(16, kernel_size=(3,3)),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3)),
         ReLU(),
+        Dropout(0.1),
+        MaxPooling(pool_size=2, strides=2),
+        Conv(64, kernel_size=(3,3)),
+        ReLU(),
+        Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
         Conv(64, kernel_size=(3,3)),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3)),
-        ReLU(),
-        MaxPooling(pool_size=2, strides=2),
+        Dropout(0.1),
         Flatten(),
         Dense(input_dim=256, output_dim=512),
         ReLU(),
         Dense(input_dim=512, output_dim=num_classes),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
 
 def test_predict():
@@ -68,8 +71,8 @@ def test_run():
     x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
     x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
 
-    x_train = (x_train -  122.5 ) / 255.0
-    x_test = (x_test - 122.5) / 255.0
+    x_train = (x_train -  127.5 ) / 255.0
+    x_test = (x_test - 127.5) / 255.0
 
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
