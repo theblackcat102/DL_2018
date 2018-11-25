@@ -71,7 +71,7 @@ def test_run(regularizer=None):
     y_test = keras.utils.to_categorical(y_test, num_classes)
     X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 127.5) / 255.0
     X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 127.5) / 255.0
-    clf = build_model()
+    clf = build_model(regularizer)
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
     train_idx = [ x for x in range(0,len(X_train))]
@@ -87,8 +87,8 @@ def test_run(regularizer=None):
         filename = 'mnist_finished_model.pkl'
         history_name = 'mnist_training_history.pkl'
     else:
-        filename = 'mnist_finished_model_l2_%f.pkl' % l2_regularization
-        history_name = 'mnist_training_history_l2_%f.pkl' % l2_regularization
+        filename = 'mnist_finished_model_l2_%f.pkl' % regularizer
+        history_name = 'mnist_training_history_l2_%f.pkl' % regularizer
 
     for epoch in range(epoch_num):
         train_loss = 0
@@ -129,4 +129,4 @@ def test_run(regularizer=None):
             joblib.dump(training_history, open(history_name, "wb"))
 
 if __name__ == "__main__":
-    test_run(regularizer=0.001)
+    test_run()
