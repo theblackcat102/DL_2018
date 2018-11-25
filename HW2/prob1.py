@@ -123,7 +123,7 @@ def test_run(regularizer=None):
 
         if epoch % 10 == 0:
             with open(filename, 'wb') as f:
-                joblib.dump(clf, f, compress=3)
+                pickle.dump(clf, f)
             joblib.dump(training_history, open(history_name, "wb"))
 
 
