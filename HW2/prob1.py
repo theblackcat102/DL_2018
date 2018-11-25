@@ -20,8 +20,6 @@ def build_model(l2_regularization=None):
     model = Model([
         Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
@@ -127,6 +125,39 @@ def test_run(regularizer=None):
             with open(filename, 'wb') as f:
                 joblib.dump(clf, f, compress=3)
             joblib.dump(training_history, open(history_name, "wb"))
+
+
+def plot_one(history_name='mnist_training_history.pkl'):
+    import pandas as pd
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    category = []
+    iterations = []
+    value = []
+
+    stats = joblib.load(open(history_name, 'rb'))
+    stats_df = pd.DataFrame(data=stats)
+    for idx, row in stats_df.iterrows():
+        iterations.append(idx)
+        value.append(row['training_acc'])
+        category.append('Training Accuracy')
+
+        iterations.append(idx)
+        value.append(row['validation_acc'])
+        category.append('Validation Accuracy')
+
+        iterations.append(idx)
+        value.append(row['testing_acc'])
+        category.append('Test Accuracy')
+
+    plot_df = pd.DataFrame(data={
+        'Accuracy': value,
+        'type': category,
+        'iterations': iterations,
+    })
+    sns.lineplot(x='iterations', y='Accuracy', hue='type', data=plot_df)
+    plt.show()
+
 
 if __name__ == "__main__":
     test_run()
