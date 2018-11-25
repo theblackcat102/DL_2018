@@ -13,29 +13,23 @@ from sklearn.model_selection import train_test_split
 
 num_classes = 10
 
-l2_regularization = None
-
-def load_model():
+def load_model(l2_regularization=None):
     cifar_model = Model([
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
-        Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
-        Dropout(0.1),
-        MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Dropout(0.1),
+        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
         Flatten(),
-        Dense(input_dim=256, output_dim=512, l2_regularization=l2_regularization),
+        Dense(input_dim=512, output_dim=256, l2_regularization=l2_regularization),
         ReLU(),
-        Dense(input_dim=512, output_dim=num_classes),
+        Dense(input_dim=256, output_dim=num_classes),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
@@ -73,15 +67,15 @@ def test_run():
     x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
     x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
 
-    x_train = (x_train -  127.5 ) / 255.0
-    x_test = (x_test - 127.5) / 255.0
+    x_train = (x_train -  127.5) / 127.5
+    x_test = (x_test - 127.5) / 127.5
 
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
     print(x_test.shape[0], 'test samples')
     
     epoch_num = 50
-    batch_size = 64
+    batch_size = 32
     # Convert class vectors to binary class matrices.
     training_history = {
         'training_loss': [],
