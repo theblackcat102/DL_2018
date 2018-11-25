@@ -126,7 +126,7 @@ def test_run():
         if epoch % 100 == 0:
             joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
             with open('cifar_finished_model.pkl', 'wb') as f:
-                joblib.dump(cifar_model, f, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
     test_run()
