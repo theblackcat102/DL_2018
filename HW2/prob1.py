@@ -64,7 +64,7 @@ def benchmark():
 
 def test_run(regularizer=None):
     epoch_num = 50
-    batch_size = 64
+    batch_size = 32
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
