@@ -27,7 +27,7 @@ class Layers:
 
 
 class Conv(Layers):
-    def __init__(self, filters, kernel_size=(3,3), strides=(1,1)):
+    def __init__(self, filters, kernel_size=(3,3), strides=(1,1), l2_regularization=None):
         if kernel_size[0] != kernel_size[1]:
             raise ValueError("kernel size must be same")
 
@@ -35,6 +35,7 @@ class Conv(Layers):
         self.kernel_size = kernel_size
         self.filters = filters
         self.channel_size = 1
+        self.l2_regularization = l2_regularization
         # self.w_optimizer = SGD(learning_rate=0.001)
         # self.b_optimizer = SGD(learning_rate=0.001)
         self.first_pass = False
@@ -81,6 +82,8 @@ class Conv(Layers):
         d_w = dout.dot(self.X_col.T)
         d_w = d_w.reshape(self.filters, -1)
         self.d_w = d_w
+        if self.l2_regularization is not None:
+            self.d_w += self.l2_regularization * ( self.weights.reshape(self.d_w.shape) )
 
         W_shape = self.weights.reshape(self.filters, -1)
         dX = W_shape.T.dot(dout)
@@ -188,10 +191,11 @@ class MaxPooling(Layers):
 
 class Dense(Layers):
 
-    def __init__(self, input_dim, output_dim):
+    def __init__(self, input_dim, output_dim, l2_regularization=None):
         self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim)
         # print(self.W.shape)
         self.b = np.zeros(output_dim).astype('float32')
+        self.l2_regularization = l2_regularization
 
     def set_optimizer(self, optimizer):
         self.w_optimizer = optimizer.copy()
@@ -204,6 +208,8 @@ class Dense(Layers):
     def backward(self, grad):      
         # print(grad)  
         self.d_w = np.mean(np.matmul(self.inputs[:, :, None], grad[:, None, :]), axis=0)
+        if self.l2_regularization is not None:
+            self.d_w += self.l2_regularization * ( self.weights)
         self.d_b = np.mean(grad)
         del self.inputs
         return np.dot(grad, self.W.T)

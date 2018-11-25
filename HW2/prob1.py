@@ -13,23 +13,26 @@ import datetime
 from sklearn.externals import joblib
 num_classes = 10
 
-def build_model():
+
+l2_regularization = None
+
+def build_model(l2_regularization=None):
     model = Model([
-        Conv(16, kernel_size=(3,3)),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
-        Conv(16, kernel_size=(3,3)),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(32, kernel_size=(3,3)),
+        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         # Conv(64, kernel_size=(3,3)),
         # MaxPooling(pool_size=2, strides=1), 
         # ReLU(),
         Flatten(),
-        Dense(input_dim=1568, output_dim=256),
+        Dense(input_dim=1568, output_dim=128),
         ReLU(),
-        Dense(input_dim=256, output_dim=num_classes),
+        Dense(input_dim=128, output_dim=num_classes, l2_regularization=l2_regularization),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
@@ -59,7 +62,7 @@ def benchmark():
         avg_sum += delta.total_seconds() * 1000
     print("Batch size %d, time : %f ms" % (batch_size, avg_sum/10))
 
-def test_run():
+def test_run(regularizer=None):
     epoch_num = 50
     batch_size = 64
 
@@ -79,6 +82,14 @@ def test_run():
         'training_acc': [],
         'validation_acc': [],
     }
+
+    if regularizer is None:
+        filename = 'mnist_finished_model.pkl'
+        history_name = 'mnist_training_history.pkl'
+    else:
+        filename = 'mnist_finished_model_l2_%f.pkl' % l2_regularization
+        history_name = 'mnist_training_history_l2_%f.pkl' % l2_regularization
+
     for epoch in range(epoch_num):
         train_loss = 0
         start = datetime.datetime.now()
@@ -113,9 +124,9 @@ def test_run():
         y_train = y_train[train_idx]
 
         if epoch % 10 == 0:
-            with open('mnist_finished_model.pkl', 'wb') as f:
-                joblib.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
-            joblib.dump(training_history, open("mnist_training_history.pkl", "wb"))
+            with open(filename, 'wb') as f:
+                joblib.dump(clf, f, compress=3)
+            joblib.dump(training_history, open(history_name, "wb"))
 
 if __name__ == "__main__":
-    test_run()
+    test_run(regularizer=0.001)

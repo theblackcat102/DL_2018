@@ -13,25 +13,27 @@ from sklearn.model_selection import train_test_split
 
 num_classes = 10
 
+l2_regularization = None
+
 def load_model():
     cifar_model = Model([
-        Conv(16, kernel_size=(3,3)),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(32, kernel_size=(3,3)),
-        ReLU(),
-        Dropout(0.1),
-        MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3)),
+        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3)),
+        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
+        Dropout(0.1),
+        MaxPooling(pool_size=2, strides=2),
+        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Dropout(0.1),
         Flatten(),
-        Dense(input_dim=256, output_dim=512),
+        Dense(input_dim=256, output_dim=512, l2_regularization=l2_regularization),
         ReLU(),
         Dense(input_dim=512, output_dim=num_classes),
         Softmax(),
