@@ -67,8 +67,8 @@ def test_run(regularizer=None):
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
-    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') - 127.5) / 255.0
-    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') - 127.5) / 255.0
+    X_train = (x_train.reshape(len(x_train), 1, 28, 28).astype('float32') ) / 255.0
+    X_test = (x_test.reshape(len(x_test), 1, 28, 28).astype('float32') ) / 255.0
     clf = build_model(regularizer)
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
@@ -82,11 +82,11 @@ def test_run(regularizer=None):
     }
 
     if regularizer is None:
-        filename = 'mnist_finished_model.pkl'
-        history_name = 'mnist_training_history.pkl'
+        filename = 'mnist2_finished_model.pkl'
+        history_name = 'mnist2_training_history.pkl'
     else:
-        filename = 'mnist_finished_model_l2_%f.pkl' % regularizer
-        history_name = 'mnist_training_history_l2_%f.pkl' % regularizer
+        filename = 'mnist2_finished_model_l2_%f.pkl' % regularizer
+        history_name = 'mnist2_training_history_l2_%f.pkl' % regularizer
 
     for epoch in range(epoch_num):
         train_loss = 0
@@ -160,4 +160,4 @@ def plot_one(history_name='mnist_training_history.pkl'):
 
 
 if __name__ == "__main__":
-    test_run()
+    test_run(0.0001)
