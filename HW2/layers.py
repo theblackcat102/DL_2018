@@ -211,7 +211,7 @@ class Dense(Layers):
         # print(grad)  
         self.d_w = np.mean(np.matmul(self.inputs[:, :, None], grad[:, None, :]), axis=0)
         if self.l2_regularization is not None:
-            self.d_w += self.l2_regularization * ( self.weights)
+            self.d_w += self.l2_regularization * ( self.W)
         self.d_b = np.mean(grad)
         del self.inputs
         return np.dot(grad, self.W.T)
