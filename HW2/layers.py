@@ -40,12 +40,17 @@ class Conv(Layers):
         # self.b_optimizer = SGD(learning_rate=0.001)
         self.first_pass = False
     
-    def initial_weights(self):
+    def initial_weights(self, C):
         sigma = 0.01
-        self.weights = np.random.randn(self.filters, 
-                self.channel_size, self.kernel_size[0], 
-                self.kernel_size[1]) * np.sqrt(2. / (self.kernel_size[1]*self.kernel_size[0]*self.channel_size*self.filters))
-        self.bias = np.ones((self.filters, 1)) * 0.001
+        # self.weights = np.random.randn(self.filters, 
+        #         self.channel_size, self.kernel_size[0], 
+        #         self.kernel_size[1]) * np.sqrt(2. / (self.kernel_size[1]*self.kernel_size[0]*self.channel_size*self.filters))
+        self.weights = np.random.uniform(
+            low=-np.sqrt(6 / (self.filters + C)),
+            high=np.sqrt(6 / (self.filters + C)),
+            size=(self.filters, self.channel_size, self.kernel_size[0], self.kernel_size[1])
+        )
+        self.bias = np.zeros((self.filters, 1))
         self.padding = 1
 
     def set_optimizer(self, optimizer):
@@ -56,7 +61,7 @@ class Conv(Layers):
         N, C, H, W = x.shape
         self.channel_size = C
         if self.first_pass is False:
-            self.initial_weights()
+            self.initial_weights(C)
             self.first_pass = True
         assert len(x.shape) == 4
 
@@ -194,7 +199,12 @@ class MaxPooling(Layers):
 class Dense(Layers):
 
     def __init__(self, input_dim, output_dim, l2_regularization=None):
-        self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim/2.0)
+        # self.W = np.random.randn(input_dim, output_dim) / np.sqrt(input_dim/2.0)
+
+        # glorot uniform
+        self.W = np.random.uniform(low=-np.sqrt(6/(input_dim + output_dim)),
+            high=np.sqrt(6/(input_dim + output_dim)),
+            size=(input_dim, output_dim))
         # print(self.W.shape)
         self.b = np.zeros(output_dim).astype('float32')
         self.l2_regularization = l2_regularization
@@ -213,7 +223,7 @@ class Dense(Layers):
         if self.l2_regularization is not None:
             self.d_w += self.l2_regularization * ( self.W)
         self.d_b = np.mean(grad)
-        del self.inputs
+        # del self.inputs
         return np.dot(grad, self.W.T)
 
     def update(self):

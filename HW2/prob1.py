@@ -18,17 +18,14 @@ l2_regularization = None
 
 def build_model(l2_regularization=None):
     model = Model([
+        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
+        MaxPooling(pool_size=2, strides=2),
         Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
-        MaxPooling(pool_size=2, strides=2),
-        # Conv(64, kernel_size=(3,3)),
-        # MaxPooling(pool_size=2, strides=1), 
-        # ReLU(),
         Flatten(),
-        Dense(input_dim=1568, output_dim=128),
+        Dense(input_dim=784, output_dim=128),
         ReLU(),
         Dense(input_dim=128, output_dim=num_classes, l2_regularization=l2_regularization),
         Softmax(),
@@ -101,7 +98,8 @@ def test_run(regularizer=None):
             clf.update_weight()
             if idx % 100 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
-        training_acc = accuracy( clf.predict(X_train[:100]), y_train[:100])
+            training_acc = accuracy( clf.predict(X_train[:100]), y_train[:100])
+            print(training_acc)
         validation_acc = accuracy( clf.predict(X_test), y_test)
         testing_acc = accuracy(clf.predict(x_val), y_val)
 

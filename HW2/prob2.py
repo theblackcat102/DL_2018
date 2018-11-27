@@ -15,34 +15,32 @@ num_classes = 10
 
 def load_model(l2_regularization=None):
     cifar_model = Model([
-        Conv(32, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
+        # Dropout(0.1),
+        MaxPooling(pool_size=2, strides=2),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
-        Dropout(0.1),
-        MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
-        Dropout(0.3),
-        MaxPooling(pool_size=2, strides=2),
-        Conv(64, kernel_size=(3,3), l2_regularization=l2_regularization),
-        ReLU(),
         Flatten(),
-        Dense(input_dim=1024, output_dim=512, l2_regularization=l2_regularization),
-        Dropout(0.3),
+        # Dropout(0.2),
+        Dense(input_dim=1024, output_dim=128),
+        # Dropout(0.5),
         ReLU(),
-        Dense(input_dim=512, output_dim=num_classes),
+        Dense(input_dim=128, output_dim=num_classes, l2_regularization=l2_regularization),
         Softmax(),
-        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.0001) )
+        ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
 
 def test_predict():
     cifar_model = load_model()
 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
-    x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
+    x_train = x_train.reshape(len(x_train),  32, 32, 3).astype(dtype=np.float64)
+    x_test = x_test.reshape(len(x_test), 32, 32, 3).astype(dtype=np.float64)
+
+    x_train = x_train.transpose(0, 3, 1, 2)
+    x_test = x_test.transpose(0, 3, 1, 2)
 
     x_train = x_train / 255.0
     x_test = x_test / 255.0
@@ -70,8 +68,8 @@ def test_run():
     x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
     x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
 
-    x_train = (x_train -  127.5) / 127.5
-    x_test = (x_test - 127.5) / 127.5
+    x_train = (x_train -  0) / 255.0
+    x_test = (x_test - 0) / 255.0
 
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
@@ -104,10 +102,16 @@ def test_run():
             train_loss += loss
             cifar_model.update_weight()
             if idx % 100 == 0:
-                print("Iter : %d, loss : %f" % (idx, loss))
-        print("Finished training")
+                testing_acc = accuracy( cifar_model.predict(x_val), y_val)
+                print("Iter : %d, loss : %f, accuracy: %f" % (idx, loss, testing_acc))
+
+            # print(training_acc)
+            # print(loss)
+        # training data accuracy
         training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
+        # training data validation split
         testing_acc = accuracy( cifar_model.predict(x_val), y_val)
+        # testing dataset accuracy
         validation_acc = accuracy( cifar_model.predict(x_test), y_test)
         val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
 
