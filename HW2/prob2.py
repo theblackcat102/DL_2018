@@ -64,8 +64,10 @@ def test_evaluate():
 
     val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
 
-def test_run():
-    cifar_model = load_model()
+def test_run(regularizer=None):
+    if regularizer is not None:
+        print(regularizer)
+    cifar_model = load_model(regularizer)
 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
@@ -123,20 +125,19 @@ def test_run():
             training_history['testing_acc'].append(testing_acc)
             training_history['training_acc'].append(training_acc)
             training_history['validation_acc'].append(validation_acc)
-
-            # print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
-            # pbar.write('Epoch %3d/%3d, train-loss: %.4f, val-loss: %.4f, '
-            #                     'val-acc: %.3f' % (i + 1, n_epoch, train_loss,
-            #                     val_loss, val_acc))
             
             np.random.shuffle(train_idx)
             x_train = x_train[train_idx]
             y_train = y_train[train_idx]
+            if regularizer is None:
+                filename = "cifar_%d_training_history.pkl" % epoch
+            else:
+                filename = "cifar_%d_training_history_%f.pkl" % (epoch, regularizer)
 
             joblib.dump({'history': training_history,
-                'model': cifar_model }, open("cifar_%d_training_history.pkl" % epoch, "wb"))
-    with open('cifar_finished_model.pkl', 'wb') as f:
+                'model': cifar_model }, open(filename, "wb"))
+    with open('model_'+filename, 'wb') as f:
         pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
-    test_run()
+    test_run(regularizer=0.001)
