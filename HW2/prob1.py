@@ -120,9 +120,10 @@ def test_run(regularizer=None):
         y_train = y_train[train_idx]
 
         if epoch % 10 == 0:
-            with open(filename, 'wb') as f:
-                pickle.dump(clf, f)
-            joblib.dump(training_history, open(history_name, "wb"))
+            # with open(filename, 'wb') as f:
+            #     pickle.dump(clf, f)
+            joblib.dump({'history': training_history,
+                'model': clf} , open(history_name, "wb"))
 
 
 def plot_one(history_name='mnist_training_history.pkl'):

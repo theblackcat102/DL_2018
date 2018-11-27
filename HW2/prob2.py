@@ -94,7 +94,7 @@ def test_run():
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.3, random_state=42)
 
     train_idx = [ x for x in range(0,len(x_train))]
-    with tqdm(total=epoch_num, ncols=80) as pbar:
+    with tqdm(total=epoch_num*batch_size, ncols=80) as pbar:
         for epoch in range(epoch_num):
             train_loss = 0
             for idx, start_idx in enumerate(range(0, len(x_train)-batch_size, batch_size)):
@@ -108,6 +108,7 @@ def test_run():
                     testing_acc = accuracy( cifar_model.predict(x_val), y_val)
                     pbar.write('Epoch %3d/%3d, train-loss: %.4f,'
                                 'val-acc: %.3f' % (epoch + 1, epoch_num, loss, testing_acc))
+                    pbar.update(1)
                     # print("Iter : %d, loss : %f, accuracy: %f" % (idx, loss, testing_acc))
             # training data accuracy
             training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
@@ -123,11 +124,11 @@ def test_run():
             training_history['training_acc'].append(training_acc)
             training_history['validation_acc'].append(validation_acc)
 
-            print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
-            pbar.write('Epoch %3d/%3d, train-loss: %.4f, val-loss: %.4f, '
-                                'val-acc: %.3f' % (i + 1, n_epoch, train_loss,
-                                val_loss, val_acc))
-            pbar.update(1)
+            # print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
+            # pbar.write('Epoch %3d/%3d, train-loss: %.4f, val-loss: %.4f, '
+            #                     'val-acc: %.3f' % (i + 1, n_epoch, train_loss,
+            #                     val_loss, val_acc))
+            
             np.random.shuffle(train_idx)
             x_train = x_train[train_idx]
             y_train = y_train[train_idx]
