@@ -132,10 +132,10 @@ def test_run():
             x_train = x_train[train_idx]
             y_train = y_train[train_idx]
 
-            if epoch % 100 == 0:
-                joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
-                with open('cifar_finished_model.pkl', 'wb') as f:
-                    pickle.dump(cifar_model, f)
+            joblib.dump({'history': training_history,
+                'model': cifar_model }, open("cifar_%d_training_history.pkl" % epoch, "wb"))
+    with open('cifar_finished_model.pkl', 'wb') as f:
+        pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
     test_run()
