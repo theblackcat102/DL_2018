@@ -59,7 +59,7 @@ def benchmark():
 
 def test_run(regularizer=None):
     epoch_num = 50
-    batch_size = 32
+    batch_size = 256
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     y_train = keras.utils.to_categorical(y_train, num_classes)
@@ -79,8 +79,8 @@ def test_run(regularizer=None):
     }
 
     if regularizer is None:
-        filename = 'mnist2_finished_model.pkl'
-        history_name = 'mnist2_training_history.pkl'
+        filename = 'mnist3_finished_model.pkl'
+        history_name = 'mnist3_training_history.pkl'
     else:
         filename = 'mnist2_finished_model_l2_%f.pkl' % regularizer
         history_name = 'mnist2_training_history_l2_%f.pkl' % regularizer
@@ -99,7 +99,7 @@ def test_run(regularizer=None):
             if idx % 100 == 0:
                 print("Iter : %d, loss : %f" % (idx, loss))
             training_acc = accuracy( clf.predict(X_train[:100]), y_train[:100])
-            print(training_acc)
+            # print(training_acc)
         validation_acc = accuracy( clf.predict(X_test), y_test)
         testing_acc = accuracy(clf.predict(x_val), y_val)
 
@@ -159,4 +159,4 @@ def plot_one(history_name='mnist_training_history.pkl'):
 
 
 if __name__ == "__main__":
-    test_run(0.0001)
+    test_run()
