@@ -10,12 +10,15 @@ from metrics import *
 import joblib
 from helper import MacOSFile
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 num_classes = 10
 
 def load_model(l2_regularization=None):
     cifar_model = Model([
-        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
+        ReLU(),
+        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         # Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
@@ -91,46 +94,48 @@ def test_run():
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size= 0.3, random_state=42)
 
     train_idx = [ x for x in range(0,len(x_train))]
+    with tqdm(total=epoch_num, ncols=80) as pbar:
+        for epoch in range(epoch_num):
+            train_loss = 0
+            for idx, start_idx in enumerate(range(0, len(x_train)-batch_size, batch_size)):
+                end_idx = start_idx+batch_size
+                x_batch = x_train[start_idx:end_idx]
+                y_batch = y_train[start_idx:end_idx]
+                loss = np.mean(cifar_model.train_on_batch(x_batch, y_batch))
+                train_loss += loss
+                cifar_model.update_weight()
+                if idx % 10 == 0:
+                    testing_acc = accuracy( cifar_model.predict(x_val), y_val)
+                    pbar.write('Epoch %3d/%3d, train-loss: %.4f,'
+                                'val-acc: %.3f' % (epoch + 1, epoch_num, loss, testing_acc))
+                    # print("Iter : %d, loss : %f, accuracy: %f" % (idx, loss, testing_acc))
+            # training data accuracy
+            training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
+            # training data validation split
+            testing_acc = accuracy( cifar_model.predict(x_val), y_val)
+            # testing dataset accuracy
+            validation_acc = accuracy( cifar_model.predict(x_test), y_test)
+            val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
 
-    for epoch in range(epoch_num):
-        train_loss = 0
-        for idx, start_idx in enumerate(range(0, len(x_train)-batch_size, batch_size)):
-            end_idx = start_idx+batch_size
-            x_batch = x_train[start_idx:end_idx]
-            y_batch = y_train[start_idx:end_idx]
-            loss = np.mean(cifar_model.train_on_batch(x_batch, y_batch))
-            train_loss += loss
-            cifar_model.update_weight()
-            if idx % 100 == 0:
-                testing_acc = accuracy( cifar_model.predict(x_val), y_val)
-                print("Iter : %d, loss : %f, accuracy: %f" % (idx, loss, testing_acc))
+            training_history['training_loss'].append(train_loss/len(x_train))
+            training_history['val_loss'].append(val_loss)
+            training_history['testing_acc'].append(testing_acc)
+            training_history['training_acc'].append(training_acc)
+            training_history['validation_acc'].append(validation_acc)
 
-            # print(training_acc)
-            # print(loss)
-        # training data accuracy
-        training_acc = accuracy( cifar_model.predict(x_train[:100]), y_train[:100])
-        # training data validation split
-        testing_acc = accuracy( cifar_model.predict(x_val), y_val)
-        # testing dataset accuracy
-        validation_acc = accuracy( cifar_model.predict(x_test), y_test)
-        val_loss = np.mean(cifar_model.evaluate(x_test, y_test))
+            print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
+            pbar.write('Epoch %3d/%3d, train-loss: %.4f, val-loss: %.4f, '
+                                'val-acc: %.3f' % (i + 1, n_epoch, train_loss,
+                                val_loss, val_acc))
+            pbar.update(1)
+            np.random.shuffle(train_idx)
+            x_train = x_train[train_idx]
+            y_train = y_train[train_idx]
 
-        training_history['training_loss'].append(train_loss/len(x_train))
-        training_history['val_loss'].append(val_loss)
-        training_history['testing_acc'].append(testing_acc)
-        training_history['training_acc'].append(training_acc)
-        training_history['validation_acc'].append(validation_acc)
-
-        print("Epoch: %d, Loss: %f, Acc: %f, Val Acc: %f, Val loss %f" % ( epoch, train_loss/len(x_train), training_acc, testing_acc, val_loss))
-
-        np.random.shuffle(train_idx)
-        x_train = x_train[train_idx]
-        y_train = y_train[train_idx]
-
-        if epoch % 100 == 0:
-            joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
-            with open('cifar_finished_model.pkl', 'wb') as f:
-                pickle.dump(cifar_model, f)
+            if epoch % 100 == 0:
+                joblib.dump(training_history, open("cifar_training_history.pkl", "wb"))
+                with open('cifar_finished_model.pkl', 'wb') as f:
+                    pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
     test_run()
