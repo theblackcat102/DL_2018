@@ -119,10 +119,10 @@ def test_run(regularizer=None):
         X_train = X_train[train_idx]
         y_train = y_train[train_idx]
 
-        if epoch % 10 == 0:
+        if epoch % 5 == 0:
             # with open(filename, 'wb') as f:
             #     pickle.dump(clf, f)
-            joblib.dump({'history': training_history,
+            pickle.dump({'history': training_history,
                 'model': clf} , open(history_name, "wb"))
 
 
