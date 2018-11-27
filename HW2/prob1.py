@@ -159,4 +159,4 @@ def plot_one(history_name='mnist_training_history.pkl'):
 
 
 if __name__ == "__main__":
-    test_run()
+    test_run(0.0001)
