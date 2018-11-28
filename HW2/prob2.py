@@ -13,24 +13,25 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 num_classes = 10
+basename = "cifar_small"
 
 def load_model(l2_regularization=None):
     cifar_model = Model([
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         # Dropout(0.1),
         MaxPooling(pool_size=2, strides=2),
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Flatten(),
         # Dropout(0.2),
-        Dense(input_dim=1024, output_dim=128),
+        Dense(input_dim=1024, output_dim=64),
         # Dropout(0.5),
         ReLU(),
-        Dense(input_dim=128, output_dim=num_classes, l2_regularization=l2_regularization),
+        Dense(input_dim=64, output_dim=num_classes, l2_regularization=l2_regularization),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return cifar_model
@@ -133,14 +134,14 @@ def test_run(regularizer=None):
             x_train = x_train[train_idx]
             y_train = y_train[train_idx]
             if regularizer is None:
-                filename = "cifar_%d_training_history.pkl" % epoch
+                filename = basename + "%d_training_history.pkl" % epoch
             else:
-                filename = "cifar_%d_training_history_%f.pkl" % (epoch, regularizer)
-
-            joblib.dump({'history': training_history,
-                'model': cifar_model }, open(filename, "wb"))
-    with open('model_'+filename, 'wb') as f:
-        pickle.dump(cifar_model, f)
+                filename = basename + "%d_training_history_%f.pkl" % (epoch, regularizer)
+            if epoch % 5 == 0:
+                pickle.dump({'history': training_history,
+                    'model': cifar_model }, open(filename, "wb"))
+    # with open('model_'+filename, 'wb') as f:
+    #     pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
     test_run(regularizer=0.001)
