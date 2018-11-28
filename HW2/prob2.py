@@ -28,7 +28,7 @@ def load_model(l2_regularization=None):
         MaxPooling(pool_size=2, strides=2),
         Flatten(),
         # Dropout(0.2),
-        Dense(input_dim=1024, output_dim=64),
+        Dense(input_dim=512, output_dim=64),
         # Dropout(0.5),
         ReLU(),
         Dense(input_dim=64, output_dim=num_classes, l2_regularization=l2_regularization),
