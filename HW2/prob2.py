@@ -70,8 +70,11 @@ def test_run(regularizer=None):
     cifar_model = load_model(regularizer)
 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    x_train = x_train.reshape(len(x_train), 3, 32, 32).astype(dtype=np.float64)
-    x_test = x_test.reshape(len(x_test), 3, 32, 32).astype(dtype=np.float64)
+    x_train = x_train.reshape(len(x_train),  32, 32, 3).astype(dtype=np.float64)
+    x_test = x_test.reshape(len(x_test), 32, 32, 3).astype(dtype=np.float64)
+
+    x_train = x_train.rollaxis(3, 1)
+    x_test = x_test.rollaxis(3, 1)
 
     x_train = (x_train -  0) / 255.0
     x_test = (x_test - 0) / 255.0

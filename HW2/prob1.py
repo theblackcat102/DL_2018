@@ -15,19 +15,20 @@ num_classes = 10
 
 
 l2_regularization = None
+basename = 'mnist_small'
 
 def build_model(l2_regularization=None):
     model = Model([
-        Conv(8, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(4, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
-        Conv(16, kernel_size=(3,3), l2_regularization=l2_regularization),
+        Conv(4, kernel_size=(3,3), l2_regularization=l2_regularization),
         ReLU(),
         MaxPooling(pool_size=2, strides=2),
         Flatten(),
-        Dense(input_dim=784, output_dim=128),
+        Dense(input_dim=196, output_dim=32),
         ReLU(),
-        Dense(input_dim=128, output_dim=num_classes, l2_regularization=l2_regularization),
+        Dense(input_dim=32, output_dim=num_classes, l2_regularization=l2_regularization),
         Softmax(),
         ],loss=CrossEntropy(), optimizer=RMSProp(learning_rate=0.001) )
     return model
@@ -70,6 +71,7 @@ def test_run(regularizer=None):
 
     X_train, x_val, y_train, y_val = train_test_split(X_train, y_train, test_size= 0.2, random_state=42)
     train_idx = [ x for x in range(0,len(X_train))]
+    print(regularizer)
     training_history = {
         'training_loss': [],
         'val_loss': [],
@@ -79,11 +81,11 @@ def test_run(regularizer=None):
     }
 
     if regularizer is None:
-        filename = 'mnist3_finished_model.pkl'
-        history_name = 'mnist3_training_history.pkl'
+        filename = basename + '_finished_model.pkl'
+        history_name = basename + '_training_history.pkl'
     else:
-        filename = 'mnist2_finished_model_l2_%f.pkl' % regularizer
-        history_name = 'mnist2_training_history_l2_%f.pkl' % regularizer
+        filename = basename + '_finished_model_l2_%f.pkl' % regularizer
+        history_name = basename + '_training_history_l2_%f.pkl' % regularizer
 
     for epoch in range(epoch_num):
         train_loss = 0
@@ -130,22 +132,22 @@ def plot_one(history_name='mnist_training_history.pkl'):
     import pandas as pd
     import seaborn as sns
     import matplotlib.pyplot as plt
-    category = []
-    iterations = []
-    value = []
+    category = ['Training Accuracy','Validation Accuracy','Test Accuracy']
+    iterations = [0,0,0]
+    value = [0,0,0]
 
     stats = joblib.load(open(history_name, 'rb'))
     stats_df = pd.DataFrame(data=stats)
     for idx, row in stats_df.iterrows():
-        iterations.append(idx)
+        iterations.append(idx+1)
         value.append(row['training_acc'])
         category.append('Training Accuracy')
 
-        iterations.append(idx)
+        iterations.append(idx+1)
         value.append(row['validation_acc'])
         category.append('Validation Accuracy')
 
-        iterations.append(idx)
+        iterations.append(idx+1)
         value.append(row['testing_acc'])
         category.append('Test Accuracy')
 
@@ -159,4 +161,4 @@ def plot_one(history_name='mnist_training_history.pkl'):
 
 
 if __name__ == "__main__":
-    test_run(0.0001)
+    test_run(None)
