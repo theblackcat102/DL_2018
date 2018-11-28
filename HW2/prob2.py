@@ -144,4 +144,4 @@ def test_run(regularizer=None):
     #     pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
-    test_run(regularizer=0.001)
+    test_run()
