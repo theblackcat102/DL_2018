@@ -28,7 +28,7 @@ def load_model(l2_regularization=None):
         MaxPooling(pool_size=2, strides=2),
         Flatten(),
         # Dropout(0.2),
-        Dense(input_dim=1024, output_dim=64),
+        Dense(input_dim=512, output_dim=64),
         # Dropout(0.5),
         ReLU(),
         Dense(input_dim=64, output_dim=num_classes, l2_regularization=l2_regularization),
@@ -74,8 +74,8 @@ def test_run(regularizer=None):
     x_train = x_train.reshape(len(x_train),  32, 32, 3).astype(dtype=np.float64)
     x_test = x_test.reshape(len(x_test), 32, 32, 3).astype(dtype=np.float64)
 
-    x_train = x_train.rollaxis(3, 1)
-    x_test = x_test.rollaxis(3, 1)
+    x_train = np.rollaxis(x_train, 3, 1)
+    x_test = np.rollaxis(x_test, 3, 1)
 
     x_train = (x_train -  0) / 255.0
     x_test = (x_test - 0) / 255.0
@@ -144,4 +144,4 @@ def test_run(regularizer=None):
     #     pickle.dump(cifar_model, f)
     
 if __name__ == "__main__":
-    test_run(regularizer=0.001)
+    test_run()
