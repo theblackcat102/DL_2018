@@ -121,11 +121,10 @@ def test_run(regularizer=None):
         X_train = X_train[train_idx]
         y_train = y_train[train_idx]
 
-        if epoch % 5 == 0:
-            # with open(filename, 'wb') as f:
-            #     pickle.dump(clf, f)
-            pickle.dump({'history': training_history,
-                'model': clf} , open(history_name, "wb"))
+        # with open(filename, 'wb') as f:
+        #     pickle.dump(clf, f)
+        pickle.dump({'history': training_history,
+            'model': clf} , open(history_name, "wb"))
 
 
 def plot_one(history_name='mnist_training_history.pkl'):
@@ -161,4 +160,4 @@ def plot_one(history_name='mnist_training_history.pkl'):
 
 
 if __name__ == "__main__":
-    test_run(None)
+    test_run(0.1)

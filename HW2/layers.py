@@ -250,7 +250,7 @@ class Dropout(Layers):
             self.drop_mask = np.random.binomial(1, self.dropout_rate, size=x.shape) / self.dropout_rate
             output = x * self.drop_mask
             return output
-        return x
+        return x * (1-self.dropout_rate)
 
     def backward(self, grad):
         if self.training:
